@@ -20,39 +20,38 @@ var request = require('request')
  *
  * @param {any} args 初始执行队列
  */
-function Queue(args) {
-  this.line = args || []
-  this.checkStatus = null
-  this.checkTime = 1000
-  this.count = {}
-  this.prototype.set = function(arg) {
-    this.line.push(arg)
-  }
-  this.prototype.start = function() {
-    this.checkStatus = setInterval(function() {
-      if (this.line.length != 0) {
-        this.line[0]()
-      }
-    }, this.checkTime)
-  }
-  this.prototype.stop = function() {
-    clearInterval(this.checkStatus)
-  }
-  this.prototype.run = function() {
-    var _this = this
-    try {
-      this.line[0](function() {
-        this.line.splice(0, 1)
-        _this.run()
-      })
-    } catch (error) {
-      this.stop()
-    }
-  }
-}
+// function Queue(args) {
+//   this.line = args || []
+//   this.checkStatus = null
+//   this.checkTime = 1000
+//   this.count = {}
+//   this.prototype.set = function(arg) {
+//     this.line.push(arg)
+//   }
+//   this.prototype.start = function() {
+//     this.checkStatus = setInterval(function() {
+//       if (this.line.length != 0) {
+//         this.line[0]()
+//       }
+//     }, this.checkTime)
+//   }
+//   this.prototype.stop = function() {
+//     clearInterval(this.checkStatus)
+//   }
+//   this.prototype.run = function() {
+//     var _this = this
+//     try {
+//       this.line[0](function() {
+//         this.line.splice(0, 1)
+//         _this.run()
+//       })
+//     } catch (error) {
+//       this.stop()
+//     }
+//   }
+// }
 
 fileDisplay('./imgs', function(filedir, filename) {
-  var s = function() {
     fs.readFile(filedir, function(err, data) {
       // 暂时使用文件名字作为标题
       upload({
@@ -60,8 +59,6 @@ fileDisplay('./imgs', function(filedir, filename) {
         imgs: fs.createReadStream(filedir)
       })
     })
-  }
-  queue.push(s)
 })
 /**
  * 文件遍历方法
@@ -85,8 +82,10 @@ function fileDisplay(filePath, callback) {
             var isFile = stats.isFile() //是文件
             var isDir = stats.isDirectory() //是文件夹
             if (isFile) {
-              console.log(filedir)
-              callback(filedir, filename)
+              console.log(filedir,typeof callback)
+              if(callback){
+                callback(filedir, filename)
+              }
             }
             if (isDir) {
               fileDisplay(filedir) //递归，如果是文件夹，就继续遍历该文件夹下面的文件
@@ -105,13 +104,10 @@ function upload(formdata) {
       formData: formdata
     },
     function(err, resp, body) {
-      totalCount++
       if (err) {
         console.log('Error!')
-        faileCount++
       } else {
         console.log('URL: ' + body)
-        successCount++
       }
     }
   )
