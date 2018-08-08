@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type="file" id="file">
+  <button id="btn">clickme</button>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    (function ($) {
+      $('#btn').on('click', function () {
+        var file = document.getElementById('file').files[0]
+        var data = new FormData()
+        data.append('title', '测试')
+        data.append('imgs', file)
+        console.log($.ajax)
+        $.ajax({
+          type: 'POST',
+          url: 'http://127.0.0.1:8001/photo/item',
+          data: data,
+          processData: false,
+          contentType: "application/x-www-form-urlencoded",
+          success: function (res) {
+            console.log(red)
+          },
+          error: function (err) {
+            console.log(err)
+          }
+        })
+      })
+    })(jQuery)
+  </script>
+</body>
+
+</html>
