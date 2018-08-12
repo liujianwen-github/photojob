@@ -12,51 +12,51 @@ var util = require('util')
 var url = require('url')
 var request = require('request')
 
+// var xlsx = require('node-xlsx')
+var xlsx = require('xlsx')
+
 // var queue = []
 
-
-/**
- * @description 执行队列
- *
- * @param {any} args 初始执行队列
- */
-// function Queue(args) {
-//   this.line = args || []
-//   this.checkStatus = null
-//   this.checkTime = 1000
-//   this.count = {}
-//   this.prototype.set = function(arg) {
-//     this.line.push(arg)
-//   }
-//   this.prototype.start = function() {
-//     this.checkStatus = setInterval(function() {
-//       if (this.line.length != 0) {
-//         this.line[0]()
-//       }
-//     }, this.checkTime)
-//   }
-//   this.prototype.stop = function() {
-//     clearInterval(this.checkStatus)
-//   }
-//   this.prototype.run = function() {
-//     var _this = this
-//     try {
-//       this.line[0](function() {
-//         this.line.splice(0, 1)
-//         _this.run()
-//       })
-//     } catch (error) {
-//       this.stop()
-//     }
-//   }
+// 读取excel文件
+var workbook = xlsx.readFile('11090442(1).xlsx')
+const sheetNames = workbook.SheetNames
+// console.log(sheetNames)
+var workSheet = workbook.Sheets[sheetNames[0]]
+// console.log(xlsx.parse(__dirname + '/11090442_1.xlsx')[1].data)
+// 获取读取文件内容
+var json_data = xlsx.utils.sheet_to_json(workSheet)
+// console.log(json_data)
+// var arr = JSON.parse(json_data.toString())
+// console.log(arr)
+// for(let i in json_data){
+//   console.log(json_data[i]['姓名'])
 // }
+console.log(json_data[0])
+// console.log(json_data[1]['__EMPTY'])
+function findDesc(str,arr){
+  var res = ''
+  for(var i =0 ;i<arr.length;i++){
+    if(str.indexOf(arr[i]['学号'])!=-1){
+      res = arr[i]['留言']
+      break
+    }
+  }
+  return res
+}
+// return
+
+
 
 fileDisplay('./imgs', function(filedir, filename) {
     fs.readFile(filedir, function(err, data) {
+      console.log(filename,findDesc(filename,json_data),'查留言')
+      // return
       // 暂时使用文件名字作为标题
+      console.log(`准备上传，title:${filename},desc:${findDesc(filename,json_data)}`)
       upload({
         title: filename,
-        imgs: fs.createReadStream(filedir)
+        imgs: fs.createReadStream(filedir),
+        desc:findDesc(filename,json_data)||''
       })
     })
 })
